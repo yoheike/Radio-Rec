@@ -1,7 +1,7 @@
 # Radio-Rec
 Internet radio recording automation script
 
-- 音泉(https://www.onsen.ag/)から特定の最新放送をダウンロードするbashスクリプトです
+- 音泉(https://www.onsen.ag/) から特定の最新放送をダウンロードするbashスクリプトです
 - ffmpeg、jqを使用します
 
 ## 仕様
