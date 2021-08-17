@@ -64,5 +64,5 @@ cat ./index.html | jq -r '.[].title' > ./title_list.txt
 ### ストリーム取得
 for item in ${KEYWORD[@]}; do
 	echo ${KEYWORD[@]} : ${item}
-	onsen_download ${item}
+	onsen_download "${item}"
 done
