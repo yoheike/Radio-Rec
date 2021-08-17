@@ -32,7 +32,7 @@ function onsen_download(){
 	filename="${target_title} ${title} ${delivery_date}放送${guest_title}.m4a"
 	
 	### ダウンロード済確認
-	downloded=`grep -s ${filename} ./downloaded.txt`
+	downloded=`grep -s "${filename}" ./downloaded.txt`
 	if [ "${downloded}" != "" ] ; then
 		echo "Already downloaded."
 		return 0
