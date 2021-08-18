@@ -1,20 +1,19 @@
 #!/bin/bash
 
-KEYWORD=("かもさん" "内田彩の")
+KEYWORD=("かもさん" "内田彩")
 LINE_TOKEN=""
 WORK_DIR="./"
 
 function onsen_download(){
-	TARGET=$1
-
-	### ワード検索(タイトル)
-	target_title=`cat ./index.html | jq -r '.[].title' | grep ${TARGET}`
-	if [ "${target_title}" = "" ] ; then
-		echo "no title."
-		return 0
-	fi
+	target_title=$1
+	echo Download「"${target_title}"」
 	
 	### 最新話パラメータ取得
+	contents=`cat ./index.html | jq -r --arg a "${target_title}" '.[] | select(.title == $a) | .contents[]'`
+	if [ "${contents}" = "" ] ; then
+		echo "No contents."
+		return 0
+	fi
 	title=`cat ./index.html | jq -r --arg a "${target_title}" '.[] | select(.title == $a) | .contents[0].title'`
 	poster_image_url=`cat ./index.html | jq -r --arg a "${target_title}" '.[] | select(.title == $a) | .contents[0].poster_image_url'`
 	streaming_url=`cat ./index.html | jq -r --arg a "${target_title}" '.[] | select(.title == $a) | .contents[0].streaming_url'`
@@ -49,8 +48,31 @@ function onsen_download(){
 	echo "${filename}" >> ./downloaded.txt
 	
 	### LINE通知
-	if [ ${LINE_TOKEN} != "" ] ; then
+	if [ "${LINE_TOKEN}" != "" ] ; then
 		curl -X POST -H "Authorization: Bearer ${LINE_TOKEN}" -F "message=録音完了:${filename//;/；}" https://notify-api.line.me/api/notify
+	fi
+}
+
+function onsen_search(){
+	TARGET=$1
+
+	### ワード検索(タイトル)
+	target_title=`cat ./index.html | jq -r '.[].title' | grep ${TARGET}`
+	if [ "${target_title}" = "" ] ; then
+		echo "No title : ${TARGET}"
+	else
+		onsen_download "${target_title}"
+	fi
+
+	### ワード検索(出演者)
+	performers_title=`cat ./index.html | jq -r --arg a ${TARGET} '.[] | select(.performers[].name == $a) | .title'`
+	if [ -n "${performers_title}" ] ; then
+		echo "${performers_title[@]}" | while IFS= read line
+		do
+			onsen_download "${line}"
+		done
+	else
+		echo "No title (performers) : ${TARGET}"
 	fi
 }
 
@@ -64,5 +86,5 @@ cat ./index.html | jq -r '.[].title' > ./title_list.txt
 ### ストリーム取得
 for item in ${KEYWORD[@]}; do
 	echo ${KEYWORD[@]} : ${item}
-	onsen_download "${item}"
+	onsen_search "${item}"
 done
