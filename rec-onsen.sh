@@ -74,6 +74,17 @@ function onsen_search(){
 	else
 		echo "No title (performers) : ${TARGET}"
 	fi
+
+	### ワード検索(ゲスト)
+	guests_title=`cat ./index.html | jq -r --arg a ${TARGET} '.[] | select(.contents[0].guests[]? == $a) | .title'`
+	if [ -n "${guests_title}" ] ; then
+		echo "${guests_title[@]}" | while IFS= read line
+		do
+			onsen_download "${line}"
+		done
+	else
+		echo "no title (guests) : ${TARGET}"
+	fi
 }
 
 ### jsonデータ取得
