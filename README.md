@@ -1,12 +1,14 @@
 # Radio-Rec
 Internet radio recording automation script
 
-- 音泉(https://www.onsen.ag/) から特定の最新放送をダウンロードするbashスクリプトです
+- 音泉(https://www.onsen.ag/) から特定の最新放送をダウンロードするbashスクリプトです (rec-onsen.sh)
+- 響ラジオステーション(https://hibiki-radio.jp/) 向けのスクリプトも有ります (rec-hibiki.sh)
 - ffmpeg、jqを使用します
 
 ## 仕様
 
 - 番組タイトルからキーワードを検索してダウンロードします
+- 出演者・ゲストから、完全一致で検索してダウンロードします (音泉のみ)
 - 各番組の最新話を対象としてダウンロードします
 - 動画番組の場合も決め打ちでm4aとしてダウンロードします
 - LINE Tokenを登録する事で、ダウンロード完了時に通知を行います
