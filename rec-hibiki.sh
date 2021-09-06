@@ -61,10 +61,17 @@ function hibiki_search(){
 
 ### jsonデータ取得
 cd ${WORK_DIR}
-rm -f ./programs ./title_list.txt
+rm -f ./programs ./title_list.csv
 wget --header="X-Requested-With: XMLHttpRequest" https://vcms-api.hibiki-radio.jp/api/v1/programs
 cat ./programs | jq -r '.' > ./programs.json
 cat ./programs | jq -r '.[].name' > ./title_list.txt
+
+### 番組表取得
+i=0
+for prog_id in `cat ./programs | jq -r '.[].id'`; do
+	cat ./programs | jq -r --argjson a ${i} '.[$a] | [.name, .latest_episode_name?, .updated_at?, .cast? ] | @csv' >> ./title_list.csv
+	((i++))
+done
 
 ### ストリーム取得
 for item in ${KEYWORD[@]}; do
