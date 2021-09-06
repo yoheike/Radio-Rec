@@ -92,10 +92,17 @@ function onsen_search(){
 
 ### jsonデータ取得
 cd ${WORK_DIR}
-rm -f ./index.html ./title_list.txt
+rm -f ./index.html ./title_list.csv
 wget https://www.onsen.ag/web_api/programs/
 cat ./index.html | jq -r '.' > ./index.json
 cat ./index.html | jq -r '.[].title' > ./title_list.txt
+
+### 番組表取得
+i=0
+for prog_id in `cat ./index.html | jq -r '.[].id'`; do
+	cat ./index.html | jq -r --argjson a ${i} '.[$a] | [.title, .contents[0].title?, .updated?, .contents[0].media_type?, .delivery_interval?, .performers[].name?, .contents[0].guests[]? ] | @csv' >> ./title_list.csv
+	((i++))
+done
 
 ### ストリーム取得
 for item in ${KEYWORD[@]}; do
