@@ -16,7 +16,7 @@ function hibiki_download(){
 	fi
 	title=`cat ./programs | jq -r --arg a "${target_title}" '.[] | select(.name == $a) | .episode.name'`
 	poster_image_url=`cat ./programs | jq -r --arg a "${target_title}" '.[] | select(.name == $a) | .pc_image_url'`
-	episode_id=`cat ./programs | jq -r --arg a "${target_title}" '.[] | select(.name == $a) | .episode.id'`
+	video_id=`cat ./programs | jq -r --arg a "${target_title}" '.[] | select(.name == $a) | .episode.video.id'`
 	performers=`cat ./programs | jq -r --arg a "${target_title}" '.[] | select(.name == $a) | .cast'`
 	delivery_date=`cat ./programs | jq -r --arg a "${target_title}" '.[] | select(.name == $a) | .episode.updated_at' | sed -e "s/\//／/g" | cut -c 1-14`
 	track_no=`echo ${title} | sed -e 's/[^0-9]//g'`
@@ -33,7 +33,7 @@ function hibiki_download(){
 	wget -O "${target_title} ${title} ${delivery_date}放送${guest_title}.jpg" ${poster_image_url}
 	
 	### ストリーム取得
-	wget  -O "url.json" --header="X-Requested-With: XMLHttpRequest" https://vcms-api.hibiki-radio.jp/api/v1/videos/play_check?video_id=${episode_id}
+	wget  -O "url.json" --header="X-Requested-With: XMLHttpRequest" https://vcms-api.hibiki-radio.jp/api/v1/videos/play_check?video_id=${video_id}
 	streaming_url=`cat ./url.json | jq -r .playlist_url`
 	ffmpeg -i ${streaming_url} ${codec_option} -acodec copy -bsf:a aac_adtstoasc "${filename}"
 	mv ./"${filename}" ./"${filename}.org"
