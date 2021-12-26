@@ -44,7 +44,7 @@ function onsen_download(){
 	wget -O "${target_title} ${title} ${delivery_date}放送${guest_title}.jpg" ${poster_image_url}
 	
 	### ストリーム取得
-	ffmpeg -i ${streaming_url} ${codec_option} -acodec copy -bsf:a aac_adtstoasc "${filename}"
+	ffmpeg -headers "Referer: https://www.onsen.ag/" -i ${streaming_url} ${codec_option} -acodec copy -bsf:a aac_adtstoasc "${filename}"
 	mv ./"${filename}" ./"${filename}.org"
 	ffmpeg -i "${filename}.org" -i "${target_title} ${title} ${delivery_date}放送${guest_title}.jpg" -map 0:a -map 1:v -disposition:1 attached_pic -metadata "title=${target_title} ${title}" -metadata "artist=${performers}" -metadata "comment=${guest_option}" -metadata "album=${target_title}" -metadata "track=${track_no}" -metadata "date=${delivery_date}" -c copy "${filename}"
 	rm ./*.org
