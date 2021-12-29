@@ -19,6 +19,7 @@ function hibiki_download(){
 	video_id=`cat ./programs | jq -r --arg a "${target_title}" '.[] | select(.name == $a) | .episode.video.id'`
 	performers=`cat ./programs | jq -r --arg a "${target_title}" '.[] | select(.name == $a) | .cast'`
 	delivery_date=`cat ./programs | jq -r --arg a "${target_title}" '.[] | select(.name == $a) | .episode.updated_at' | sed -e "s/\//／/g" | cut -c 1-14`
+	time_stamp=`cat ./programs | jq -r --arg a "${target_title}" '.[] | select(.name == $a) | .episode_updated_at' | sed -e "s/[^0-9]//g" | cut -c 1-12`
 	track_no=`echo ${title} | sed -e 's/[^0-9]//g'`
 	filename="${target_title} ${title} ${delivery_date}放送.m4a"
 	
@@ -40,6 +41,7 @@ function hibiki_download(){
 	ffmpeg -i "${filename}.org" -i "${target_title} ${title} ${delivery_date}放送${guest_title}.jpg" -map 0:a -map 1:v -disposition:1 attached_pic -metadata "title=${target_title} ${title}" -metadata "artist=${performers}" -metadata "album=${target_title}" -metadata "track=${track_no}" -metadata "date=${delivery_date}" -c copy "${filename}"
 	rm ./*.org ./*.jpg
 	echo "${filename}" >> ./downloaded.txt
+	touch "${filename}" -t ${time_stamp}
 	
 	### LINE通知
 	if [ "${LINE_TOKEN}" != "" ] ; then
