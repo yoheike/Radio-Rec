@@ -17,7 +17,7 @@ function onsen_download(){
 	title=`cat ./index.html | jq -r --arg a "${target_title}" '.[] | select(.title == $a) | .contents[0].title'`
 	poster_image_url=`cat ./index.html | jq -r --arg a "${target_title}" '.[] | select(.title == $a) | .contents[0].poster_image_url'`
 	streaming_url=`cat ./index.html | jq -r --arg a "${target_title}" '.[] | select(.title == $a) | .contents[0].streaming_url'`
-	guests=`cat ./index.html | jq -r --arg a "${target_title}" '.[] | select(.title == $a) | .contents[0].guests[]'`
+	guests=`cat ./index.html | jq -r --arg a "${target_title}" '.[] | select(.title == $a) | .contents[0].guests[0].name'`
 	performers=`cat ./index.html | jq -r --arg a "${target_title}" '.[] | select(.title == $a) | .performers[].name'`
 	delivery_date=`date "+%Y"`
 	delivery_date+="年"
@@ -80,7 +80,7 @@ function onsen_search(){
 	fi
 
 	### ワード検索(ゲスト)
-	guests_title=`cat ./index.html | jq -r --arg a ${TARGET} '.[] | select(.contents[0].guests[]? == $a) | .title'`
+	guests_title=`cat ./index.html | jq -r --arg a ${TARGET} '.[] | select(.contents[0].guests[0].name? == $a) | .title'`
 	if [ -n "${guests_title}" ] ; then
 		echo "${guests_title[@]}" | while IFS= read line
 		do
@@ -101,7 +101,7 @@ cat ./index.html | jq -r '.[].title' > ./title_list.txt
 ### 番組表取得
 i=0
 for prog_id in `cat ./index.html | jq -r '.[].id'`; do
-	cat ./index.html | jq -r --argjson a ${i} '.[$a] | [.title, .contents[0].title?, .updated?, .contents[0].media_type?, .delivery_interval?, .performers[].name?, .contents[0].guests[]? ] | @csv' >> ./title_list.csv
+	cat ./index.html | jq -r --argjson a ${i} '.[$a] | [.title, .contents[0].title?, .updated?, .contents[0].media_type?, .delivery_interval?, .performers[].name?, .contents[0].guests[].name? ] | @csv' >> ./title_list.csv
 	((i++))
 done
 
