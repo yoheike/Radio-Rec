@@ -1,8 +1,9 @@
 # Radio-Rec
-Internet radio recording automation script
+Internet radio recording automation scripts.
 
 - 音泉(https://www.onsen.ag/) から特定の最新放送をダウンロードするbashスクリプトです (rec-onsen.sh)
 - 響ラジオステーション(https://hibiki-radio.jp/) 向けのスクリプトも有ります (rec-hibiki.sh)
+- NHKラジオ らじる らじる 向けのスクリプトも作成しました (rec-nhk.sh)
 - ffmpeg、jqを使用します
 
 ## 仕様
